@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="_template.xhtml">
+	<f:metadata>
+		<f:viewParam name="autorId" value="#{autorBean.autorId}" />
+		<f:viewAction action="#{autorBean.carregarPelaId}"
+			if="#{param.autorId != null}" />
+	</f:metadata>
+
+	<ui:define name="titulo">
+		<p:outputPanel>Novo Autor</p:outputPanel>
+	</ui:define>
+	<ui:define name="conteudo">
+		<p:messages globalOnly="true" />
+		<h:form id="formAutor">
+			<p:fieldset legend="Dados do Autor">
+
+				<h:panelGrid columns="3">
+
+					<p:outputLabel value="Nome:" for="nome" />
+					<p:inputText id="nome" value="#{autorBean.autor.nome}"
+						required="true" requiredMessage="O nome do Autor é obrigatório"
+						validatorMessage="O nome do Autor deve não pode ter menos que 5 letras"
+						placeholder="nome do autor">
+						<f:validateLength minimum="5" />
+						<f:ajax event="blur" render="mensagemNome" />
+					</p:inputText>
+					<p:message for="nome" id="mensagemNome" />
+
+					<p:outputLabel value="E-mail:" for="email" />
+					<p:inputText id="email" value="#{autorBean.autor.email}"
+						required="true" requiredMessage="E-mail obrigatório"
+						placeholder="e-mail do autor" validatorMessage="E-mail inválido">
+						<f:attribute name="type" value="email" />
+						<f:validateRegex pattern=".+@.+" />
+						<f:ajax event="blur" render="mensagemEmail" />
+					</p:inputText>
+					<p:message for="email" id="mensagemEmail" />
+
+					<p:commandButton value="Gravar" action="#{autorBean.gravar}"
+						process="@form" update="@form :formTabelaAutores" />
+				</h:panelGrid>
+			</p:fieldset>
+		</h:form>
+
+		<h:form id="formTabelaAutores">
+			<p:fieldset legend="Tabela de Autores">
+				<p:dataList value="#{autorBean.autores}" var="autor"
+					type="definition" id="tabelaAutores">
+					<f:facet name="header">
+						Autores
+					</f:facet>
+
+					<p:commandLink value="altera" action="#{autorBean.carregar(autor)}"
+						styleClass="ui-icon ui-icon-pencil"
+						style="float:left;margin-right:10px" title="Alterar" update=":formAutor">
+<!-- 						<f:ajax execute="@this" render=":formAutor" /> -->
+					</p:commandLink>
+					-
+					<p:commandLink value="remove" action="#{autorBean.remover(autor)}"
+						styleClass="ui-icon ui-icon-trash"
+						style="float:left;margin-right:10px" title="Remover"
+						update="@form">
+						<!-- <f:ajax execute="@this" render="@form" /> -->
+					</p:commandLink>
+
+					#{autor.nome} - #{autor.email}
+				</p:dataList>
+
+			</p:fieldset>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
+</html>
