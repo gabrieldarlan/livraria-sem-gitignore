@@ -29,9 +29,9 @@
 					<p:inputMask id="isbn" value="#{livroBean.livro.isbn}"
 						validator="#{livroBean.comecaComDigitoUm}"
 						mask="999-9-99-999999-9">
-						<f:ajax event="blur" render="mensagemISBN" />
+						<f:ajax event="blur" render="messages" />
 					</p:inputMask>
-					<p:message for="isbn" id="mensagemISBN" />
+					<p:message for="isbn" id="messages" />
 
 					<p:outputLabel value="Preço:" for="preco" />
 					<p:inputNumber id="preco" value="#{livroBean.livro.preco}"

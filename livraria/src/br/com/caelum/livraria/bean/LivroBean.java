@@ -35,7 +35,7 @@ public class LivroBean {
 			Autor autor = new DAO<Autor>(Autor.class).buscaPorId(autorId);
 			this.livro.adicionaAutor(autor);
 		} else {
-			context.addMessage(null, new FacesMessage("O autor é obrigatório"));
+			context.addMessage("messages", new FacesMessage("O autor é obrigatório"));
 			return;
 		}
 	}
@@ -70,8 +70,8 @@ public class LivroBean {
 	public void comecaComDigitoUm(FacesContext tc, UIComponent component, Object value) throws ValidatorException {
 		String valor = value.toString();
 		if (!valor.startsWith("1")) {
-			throw new ValidatorException(
-					new FacesMessage(FacesMessage.SEVERITY_ERROR, null, "ISBN deve começar com o número"));
+			throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "ISBN deve começar com o número",
+					"ISBN deve começar com o número"));
 		}
 	}
 

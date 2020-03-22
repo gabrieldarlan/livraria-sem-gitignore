@@ -65,4 +65,8 @@ public class AutorBean {
 	public void setAutorId(Integer autorId) {
 		this.autorId = autorId;
 	}
+
+	public RedirectView formLivro() {
+		return new RedirectView("livro");
+	}
 }
