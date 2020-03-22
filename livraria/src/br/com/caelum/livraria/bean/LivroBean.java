@@ -27,46 +27,33 @@ public class LivroBean {
 		return livro;
 	}
 
-	
-	private List<Livro> livrosRetornados = new ArrayList<Livro>();
-	
-	public List<Livro> getLivrosRetornados() {
-		return livrosRetornados;
-	}
-	
-	public void setLivrosRetornados(List<Livro> livrosRetornados) {
-		this.livrosRetornados = livrosRetornados;
-	}
-	
+	private List<Livro> livros;
+
 	public void gravarAutor() {
-		Autor autor = new DAO<Autor>(Autor.class).buscaPorId(autorId);
-		this.livro.adicionaAutor(autor);
-	}
-
-	public List<Autor> getAutores() {
-		return new DAO<Autor>(Autor.class).listaTodos();
-	}
-
-	public List<Autor> getAutoresDoLivro() {
-		return this.livro.getAutores();
-	}
-
-	public List<Livro> getLivros() {
-		return livrosRetornados = new DAO<Livro>(Livro.class).listaTodos();
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (autorId != null) {
+			Autor autor = new DAO<Autor>(Autor.class).buscaPorId(autorId);
+			this.livro.adicionaAutor(autor);
+		} else {
+			context.addMessage(null, new FacesMessage("O autor é obrigatório"));
+			return;
+		}
 	}
 
 	public void gravar() {
-//		System.out.println("Gravando livro " + this.livro.getTitulo());
 		FacesContext context = FacesContext.getCurrentInstance();
 
 		if (livro.getAutores().isEmpty()) {
-			context.addMessage("autor", new FacesMessage("O autor é obrigatório"));
+			context.addMessage(null, new FacesMessage("O autor é obrigatório"));
+			return;
 		}
 
-		if(this.livro.getId()==null) {
-			new DAO<Livro>(Livro.class).adiciona(this.livro);
+		DAO<Livro> dao = new DAO<Livro>(Livro.class);
+		if (this.livro.getId() == null) {
+			dao.adiciona(this.livro);
+			this.livros = dao.listaTodos();
 		} else {
-			new DAO<Livro>(Livro.class).atualiza(this.livro);
+			dao.atualiza(this.livro);
 		}
 
 		this.livro = new Livro();
@@ -83,7 +70,8 @@ public class LivroBean {
 	public void comecaComDigitoUm(FacesContext tc, UIComponent component, Object value) throws ValidatorException {
 		String valor = value.toString();
 		if (!valor.startsWith("1")) {
-			throw new ValidatorException(new FacesMessage("ISBN deve começar com o número"));
+			throw new ValidatorException(
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, null, "ISBN deve começar com o número"));
 		}
 	}
 
@@ -93,7 +81,9 @@ public class LivroBean {
 
 	public void remove(Livro livro) {
 		try {
-			new DAO<Livro>(Livro.class).remove(livro);
+			DAO<Livro> dao = new DAO<Livro>(Livro.class);
+			dao.remove(livro);
+			this.livros = dao.listaTodos();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Erro na remoção do livro");
@@ -103,9 +93,29 @@ public class LivroBean {
 	public void carregar(Livro livro) {
 		this.livro = livro;
 	}
-	
+
 	public void removeAutorDoLivro(Autor autor) {
 		this.livro.remove(autor);
 	}
-	
+
+	public void limpar() {
+		this.livro = new Livro();
+	}
+
+	public List<Autor> getAutores() {
+		return new DAO<Autor>(Autor.class).listaTodos();
+	}
+
+	public List<Autor> getAutoresDoLivro() {
+		return this.livro.getAutores();
+	}
+
+	public List<Livro> getLivros() {
+		DAO<Livro> dao = new DAO<Livro>(Livro.class);
+		if (this.livros == null) {
+			this.livros = dao.listaTodos();
+		}
+		return livros;
+
+	}
 }

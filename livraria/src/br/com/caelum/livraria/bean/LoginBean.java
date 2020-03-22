@@ -37,7 +37,6 @@ public class LoginBean {
 		}
 
 		context.getExternalContext().getFlash().setKeepMessages(true);
-//		context.addMessage(null, new FacesMessage("Usuário não encontrado"));
 		context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuário não localizado", null));
 		return "login?faces-redirect=true";
 	}
